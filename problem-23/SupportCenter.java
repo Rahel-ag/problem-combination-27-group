@@ -1,10 +1,54 @@
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 public class SupportCenter {
 
+    // Simple queue implementation
+    private static class SimpleQueue {
+        private static class Node {
+            String value;
+            Node next;
+            Node(String value) { this.value = value; }
+        }
+
+        private Node head = null;
+        private Node tail = null;
+
+        public void add(String value) {
+            Node node = new Node(value);
+            if (tail == null) {
+                head = tail = node;
+            } else {
+                tail.next = node;
+                tail = node;
+            }
+        }
+
+        public String poll() {
+            if (head == null) return null;
+            String val = head.value;
+            head = head.next;
+            if (head == null) tail = null;
+            return val;
+        }
+
+        public boolean isEmpty() {
+            return head == null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[");
+            Node current = head;
+            while (current != null) {
+                sb.append(current.value);
+                if (current.next != null) sb.append(", ");
+                current = current.next;
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+    }
+
     // queues[0] = Platinum, queues[1] = Gold, queues[2] = Silver
-    private Deque<String>[] queues;
+    private SimpleQueue[] queues;
 
     // WRR quotas
     private int[] quotas = {3, 2, 1};
@@ -14,11 +58,10 @@ public class SupportCenter {
     private int currentTier = 0;
     private int currentCount = 0;
 
-    @SuppressWarnings("unchecked")
     public SupportCenter() {
-        queues = new ArrayDeque[3];
+        queues = new SimpleQueue[3];
         for (int i = 0; i < 3; i++) {
-            queues[i] = new ArrayDeque<>();
+            queues[i] = new SimpleQueue();
         }
     }
 
