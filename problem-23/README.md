@@ -16,23 +16,27 @@ Silver: 1 user per cycle
 
 Supported Commands:-
 
-ARRIVE <user> <tier> — Add a user to a specific tier queue
+ARRIVE <user> <tier> = Add a user to a specific tier queue
 
-PROCESS_NEXT — Process the next user based on WRR rules
+PROCESS_NEXT = Process the next user based on WRR rules
 
-STATUS — Display the current queue status
+STATUS = Display the current queue status
 
-EXIT — Exit the system
+EXIT = Exit the system
 
 File Structure:-
+
 Main.java          # Entry point for the application
+
 SupportCenter.java # Support center logic and queue management
 
 How to Compile and Run
 
 Compile the Java files:-
 
-javac Main.java SupportCenter.java
+javac Main.java
+
+SupportCenter.java
 
 
 Run the program:-
@@ -63,11 +67,10 @@ Alice (Plat #3)
 Bob (Gold #1)
 > STATUS
 
---- Current Queues ---
+Current Queues 
 Platinum: []
 Gold: [Bob]
 Silver: [Charlie]
-----------------------
 > EXIT
 
 Implementation Details:-
@@ -96,9 +99,9 @@ Error Handling:
 
 Only Platinum, Gold, and Silver tiers are allowed. Invalid tier input will display an error.
 
-If all queues are empty, PROCESS_NEXT prints All queues are empty.
+If all queues are empty, PROCESS_NEXT prints "All queues are empty".
 
-Notes:-
+About the system:-
 
 The system is console-based and ideal for learning or demonstration of priority-based queue management.
 The STATUS command provides a snapshot of the current queues at any time.
@@ -108,3 +111,4 @@ users are automatically processed in order, with higher-priority tiers handled m
 Users are automatically processed in order, with higher-priority tiers handled more frequently according to WRR rules.
 
 The STATUS command provides a snapshot of the current queues at any time.
+
