@@ -1,11 +1,10 @@
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class PacketBuffer{
     private MinHeap bufferHeap;
-    private Queue<Packet> playbackQueue;
+    private CircularQueue playbackQueue;
     private int nextExpected;
     private int currentTime;
     private int timeout;
@@ -16,10 +15,56 @@ public class PacketBuffer{
     private int packetsLost;
     private int totalBufferSize;
     private int tickCount;
+
+     private class CircularQueue {
+        private Packet[] queue;
+        private int front;
+        private int rear;
+        private int size;
+        private int capacity;
+        
+        public CircularQueue(int capacity) {
+            this.capacity = capacity;
+            this.queue = new Packet[capacity];
+            this.front = 0;
+            this.rear = -1;
+            this.size = 0;
+        }
+        
+        public void enqueue(Packet packet) {
+            if (size == capacity) {
+                System.out.println("Queue is full!");
+                return;
+            }
+            rear = (rear + 1) % capacity;
+            queue[rear] = packet;
+            size++;
+        }
+        
+        public Packet dequeue() {
+            if (size == 0) return null;
+            Packet packet = queue[front];
+            front = (front + 1) % capacity;
+            size--;
+            return packet;
+        }
+        public Packet peek() {
+            if (size == 0) return null;
+            return queue[front];
+        }
+        
+        public boolean isEmpty() {
+            return size == 0;
+        }
+        
+        public int size() {
+            return size;
+        }
+    }
     
     public PacketBuffer(int initialCapacity, int defaultTimeout) {
         this.bufferHeap = new MinHeap(initialCapacity);
-        this.playbackQueue = new LinkedList<>();
+        this.playbackQueue = new CircularQueue(initialCapacity);
         this.nextExpected = 1;
         this.currentTime = 0;
         this.timeout = defaultTimeout;
@@ -89,7 +134,7 @@ public class PacketBuffer{
     while (!bufferHeap.isEmpty() && 
            bufferHeap.peek().getSequenceNumber() == nextExpected) {
         Packet packet = bufferHeap.extractMin();
-        playbackQueue.add(packet);
+        playbackQueue.enqueue(packet);
         nextExpected++;
         missingSince.remove(nextExpected - 1); // Clean up if was tracked as missing
         System.out.println("Released for playback: " + packet);
@@ -99,7 +144,7 @@ public class PacketBuffer{
     public void play() {
         System.out.println("\n=== Playing Packets ===");
         while (!playbackQueue.isEmpty()) {
-            Packet packet = playbackQueue.poll();
+            Packet packet = playbackQueue.dequeue();
             System.out.println("Playing: " + packet.getData());
         }
         System.out.println("=== End of Playback ===\n");
