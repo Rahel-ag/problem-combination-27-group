@@ -8,7 +8,7 @@ public class Main {
         SupportCenter system = new SupportCenter();
 
         System.out.println(
-            "Customer Support Cenrer Loaded. " +
+            "Customer Support Center Loaded. " +
             "Commands: ARRIVE <user> <tier>, PROCESS_NEXT, STATUS, EXIT"
         );
 
