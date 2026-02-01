@@ -91,41 +91,35 @@ public class PacketBuffer{
         currentTime++;
         tickCount++;
         
-        // Check for timeouts
         checkTimeouts();
         
-        // Try to release consecutive packets
         releaseConsecutivePackets();
         
-        // Update metrics
         totalBufferSize += bufferHeap.size();
     }
     
     private void checkTimeouts() {
-    // Keep checking while there are missing packets
     while (true) {
         if (bufferHeap.isEmpty()) break;
         
         Packet nextPacket = bufferHeap.peek();
         if (nextPacket == null) break;
         
-        // If next packet in heap is what we expect, no timeout needed
         if (nextPacket.getSequenceNumber() == nextExpected) break;
         
-        // We have a missing packet
         if (!missingSince.containsKey(nextExpected)) {
             missingSince.put(nextExpected, currentTime);
         }
         
         int firstMissingTime = missingSince.get(nextExpected);
         if (currentTime - firstMissingTime >= timeout) {
-            // Timeout!
+            // Timeout
             System.out.println("Timeout for Seq " + nextExpected + "! Marked as LOST.");
             packetsLost++;
-            nextExpected++;  // Skip missing packet
+            nextExpected++;  
             missingSince.remove(nextExpected - 1);
         } else {
-            // Not timed out yet
+        
             break;
         }
     }
@@ -136,7 +130,7 @@ public class PacketBuffer{
         Packet packet = bufferHeap.extractMin();
         playbackQueue.enqueue(packet);
         nextExpected++;
-        missingSince.remove(nextExpected - 1); // Clean up if was tracked as missing
+        missingSince.remove(nextExpected - 1);
         System.out.println("Released for playback: " + packet);
     }
 }
@@ -164,7 +158,7 @@ public class PacketBuffer{
         System.out.println("================\n");
     }
     
-    // Getters for testing
+    
     public int getNextExpected(){
          return nextExpected;
           }
